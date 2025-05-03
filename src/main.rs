@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{BufReader, BufRead};
 use std::collections::HashMap;
 mod bfs;
-use bfs::bfs_airport;
+use bfs::average_hops;
 
 fn main() {
     let flight_file = File::open("flights_cleaned.csv").expect("failed to open file");
@@ -41,12 +41,13 @@ fn main() {
     // at the end of this, we will have a hashmap that contains as a key each airport, and the according values being all the existing
     // destinations for said key
 
-    let mut total_hops = 0;
-    for (origin, _destination) in &flight_hash { //go thru each airport
-        let (_furthest_airports, max_hops) = bfs_airport(origin, &flight_hash); //compute the airport's furthest hop
-        total_hops += max_hops; //add to total hops
+
+    let mut total_avg: f64 = 0.0;
+    for (origin, _destination) in &flight_hash {
+        let avg = average_hops(origin, &flight_hash);
+        total_avg += avg;
     }
-    
-    let avg_hops = total_hops as f64 / flight_hash.len() as f64; //compute the total hop avg
-    println!("avg hops = {:}", avg_hops);
+
+    println!("average hops = {}", total_avg / flight_hash.len() as f64);
+
 }
